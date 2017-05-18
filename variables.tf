@@ -1,13 +1,5 @@
 ### Variables ###
 
-variable "env" {
- default = "prod"
-}
-
-variable "name" {
-  default = "rds-instance"
-}
-
 variable "generic_instance_count" {
   description = "Number of server nodes to launch [min 3]"
   default = 2
@@ -19,12 +11,12 @@ variable "instance_type" {
 
 variable "access_key" {
   description = "AWS access key"
-  default="YOURKEYHERE"
+  default="AKIAJGSC5HYHUBT4P7DQ"
 }
 
 variable "secret_key" {
   description = "AWS secret key"
-  default="YOURSECRETHERE"
+  default="d6RuyQZaj/8s6HFgfXlLctF93EeMlvKEYq0nX2+z"
 }
 
 variable "region" {
@@ -44,7 +36,7 @@ variable "azs" {
 
 variable "route53_zone_id" {
   description = "Zone ID for the Route 53 zone "
-  default = ""
+  default = "Z355MAQUNEJUOV"
 }
 
 # AMIs for CentOS
@@ -54,7 +46,10 @@ variable "amis" {
     eu-central-1 = "ami-fd1cc092"
     eu-west-1 = "ami-7abd0209"
     us-west-2 = "ami-d2c924b2"
-    us-east-1 = "ami-a8a2dabe"
+    #us-east-1 = "ami-6d1c2007"
+    #us-east-1 = "ami-a8a2dabe"
+    #us-east-1 = "ami-0dd8a01b"
+    us-east-1 = "ami-fbd5aded"
   }
 }
 
@@ -63,7 +58,9 @@ variable "ami" {
     eu-central-1 = "ami-fd1cc092"
     eu-west-1 = "ami-7abd0209"
     us-west-2 = "ami-d2c924b2"
-    us-east-1 = "ami-6d1c2007"
+    #us-east-1 = "ami-a8a2dabe"
+    #us-east-1 = "ami-0dd8a01b"
+    us-east-1 = "ami-fbd5aded"
   }
 } 
 
@@ -82,12 +79,14 @@ variable "generic_profile_name" {
 }
 
 variable "generic_subnet_id" {
- default=["subnet-b1192cd4","subnet-79a66955","subnet-266fd76e","subnet-52e42108","subnet-201c4e1c"] 
+ #default=["subnet-b1192cd4","subnet-79a66955","subnet-266fd76e","subnet-52e42108","subnet-201c4e1c"] 
+ default=["subnet-79a66955","subnet-52e42108","subnet-201c4e1c","subnet-b1192cd4","subnet-266fd76e"]
 }
 
 variable "internal_sg_id" {
  default="sg-757a030b"
 }
+
 
 variable "admin_sg_id" {
  default="sg-757a030b"
@@ -119,9 +118,4 @@ variable "expiration" {
 variable "generic_vpc" {
  description = "VPC to deploy DCOS into"
  default = "vpc-b5f609cc"
-}
-
-variable "tags" {
-  type    = "map"
-  default = {}
 }
