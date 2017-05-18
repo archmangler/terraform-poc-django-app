@@ -41,3 +41,6 @@ Caveats:
 NOTE1: This mechanism is only a good idea if your webservers are truly stateless, state must be stored somewhere else and the webserver itself is simply a "dumb" worker node. In our PoC most of the site content and data resides in the mysql (RDS) database, and that's where state is kept.
 
 NOTE2: Improvements in security and Django web server could be made: putting the web nodes in a private subnet, putting an SG between web nodes and RDS node (making the RDS node internal to the VPC only) 
+
+---
+traiano@gmail.com
