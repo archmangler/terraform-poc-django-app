@@ -17,7 +17,6 @@ repo = Repo(git_dir)
 assert not repo.bare
 diff = repo.git.diff('HEAD~1..HEAD', name_only=True)
 if(diff):
- print(diff)
- git_pull(git_dir)
+ print("changes: "+diff)
 else:
  print("No changes.")
