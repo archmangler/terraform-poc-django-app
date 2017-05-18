@@ -44,3 +44,5 @@ NOTE2: Improvements in security and Django web server could be made: putting the
 
 ---
 traiano@gmail.com
+Friday 19/05/2017
+
