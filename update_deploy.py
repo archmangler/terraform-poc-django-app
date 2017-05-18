@@ -1,8 +1,12 @@
 #!/bin/python3
+#to be run from cron.
 #little ci/cd component to check for updates in the django site repo
-#and trigger a reboot of the node, forcing an update!
-#seems a little drastic, but here we demonstrate the concept of
+#and trigger a termination of the node, forcing an updated node
+#to replace it.
+#NOTE: Seems a little drastic, but here we demonstrate the concept of
 #immutable, disposable servers and stateless dumb web frontends
+#The termination is triggered by firewalling port 80 - the ELB
+#then declares instance as unhealthy , and the ASG policy replaces it.
 #traiano@gmail.com
 #
 
