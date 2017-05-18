@@ -64,6 +64,6 @@ Script permissions:
 [root@ip-172-31-59-94 ~]# 
 ---
 
-
+AMI: ami-00374c16
 
 
