@@ -15,8 +15,13 @@ def git_pull(git_dir):
 git_dir="/Users/traianowelcome/Desktop/output/dcos_deployers/generic-autoscaling-server/autoscaling/sanity"
 repo = Repo(git_dir)
 assert not repo.bare
-#diff = repo.git.diff('HEAD~1..HEAD', name_only=True)
 diff = repo.git.diff()
+print("---DEBUG---")
+cnt=0
+for line in diff:
+ cnt+=1
+print("content count: "+str(cnt))
+print("---DEBUG---")
 if(diff):
  print("changes: "+diff)
 else:
