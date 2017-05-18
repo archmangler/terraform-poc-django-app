@@ -46,3 +46,24 @@ NOTE2: Improvements in security and Django web server could be made: putting the
 traiano@gmail.com
 Friday 19/05/2017
 
+
+configuration notes:
+
+
+ci/cd cron job:
+
+---
+* * * * * /bin/python3 /opt/deploy/terraform-poc-django-app/update_deploy.py
+---
+
+Script permissions:
+
+---
+[root@ip-172-31-59-94 ~]# ls -l /opt/deploy/terraform-poc-django-app/update_deploy.py
+-rwxr-xr-x. 1 root root 943 May 18 18:13 /opt/deploy/terraform-poc-django-app/update_deploy.py
+[root@ip-172-31-59-94 ~]# 
+---
+
+
+
+
