@@ -17,6 +17,18 @@ When new nodes are launched due to the launch configuration, the user-data scrip
 CI/CD mechanism:
 ================
 
+Deployment process is as follows:
+
+1) make a change to the django site files in your branch
+2) push changes to master branch
+3) the web server instances check back for changes in the repo
+4) if code changes are detected, scripts on the ec2 instances firewall the webserver port 80 from further connections by the ELB
+5) This triggers a replacement action by the AWS ASGs.
+6) New instance is launched in the ASG from a base AMI, and associated to the ELB. Code is updated from the launch process
+
+
+Discussion:
+
 We use this as a simple CI/CD mechanism: a script runs five-minutely (on the web servers) polling for changes in the GitHub repo - if there are changes, the script updates the site code for Django. 
 Alternaitvely, we "throw away" the server by just shutting down nginx service and forcing the autoscaling group to replace it with a new, updated instance - this has the benefit of keeping in priciple with stateless, disposable and immutable infrastructure. 
 An even smoother way of deploying updated site configuration would be to firewall out connections to port 80 on a node when changes are detected in the site git repo.
