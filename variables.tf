@@ -49,7 +49,8 @@ variable "amis" {
     #us-east-1 = "ami-6d1c2007"
     #us-east-1 = "ami-a8a2dabe"
     #us-east-1 = "ami-0dd8a01b"
-    us-east-1 = "ami-fbd5aded"
+    #us-east-1 = "ami-fbd5aded"
+    us-east-1 = "ami-00374c16"
   }
 }
 
@@ -60,7 +61,8 @@ variable "ami" {
     us-west-2 = "ami-d2c924b2"
     #us-east-1 = "ami-a8a2dabe"
     #us-east-1 = "ami-0dd8a01b"
-    us-east-1 = "ami-fbd5aded"
+    #us-east-1 = "ami-fbd5aded"
+    us-east-1 = "ami-00374c16"
   }
 } 
 
