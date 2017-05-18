@@ -1,5 +1,3 @@
-# terraform-poc-django-app
-
 Overview:
 =========
 
