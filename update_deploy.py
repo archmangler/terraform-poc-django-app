@@ -1,9 +1,11 @@
-#!/bin/python
+#!/bin/python3
 #little ci/cd component to check for updates in the django site repo
 #and trigger a reboot of the node, forcing an update!
 #seems a little drastic, but here we demonstrate the concept of 
 #immutable, disposable servers and stateless dumb web frontends 
+#traiano@gmail.com
 #
+
 import subprocess
 import git
 from git import Repo
@@ -12,17 +14,20 @@ def git_pull(git_dir):
  g = git.cmd.Git(git_dir) 
  g.pull()
 
-git_dir="/Users/traianowelcome/Desktop/output/dcos_deployers/generic-autoscaling-server/autoscaling/sanity"
+def harakiri():
+ #apply a DROP rule to port 80 resulting in this server being terminated by the AWS ASG.
+ drop_rule="/sbin/iptables -I INPUT 1 -i eth0 -p tcp --dport 80 -j DROP"
+ subprocess.run(["/sbin/iptables", "-I", "INPUT", "1", "-i", "eth0", "-p", "tcp", "--dport", "80", "-j", "DROP"])
+
+git_dir="/opt/deploy/terraform-poc-django-app"
 repo = Repo(git_dir)
 assert not repo.bare
 diff = repo.git.diff()
-print("---DEBUG---")
-cnt=0
+content_count=0
 for line in diff:
- cnt+=1
-print("content count: "+str(cnt))
-print("---DEBUG---")
-if(diff):
+ content_count+=1
+if(content_count>0):
  print("changes: "+diff)
+ harakiri()
 else:
  print("No changes.")
