@@ -11,15 +11,23 @@
 #commit 1
 #commit 2
 #commit 3
-#commit 5
+#commit 4
 
 import subprocess
 import git
 from git import Repo
+debug=0
 
 def git_pull(git_dir):
  g = git.cmd.Git(git_dir)
- g.pull()
+ out=g.pull()
+ count=0
+ if("Already up-to-date" in out):
+  if(debug==1): print("no changes in remote")
+ else:
+  if(debug==1): print("changes in remote")
+  count=1
+ return count
 
 def harakiri():
  #apply a DROP rule to port 80 resulting in this server being terminated by the AWS ASG.
@@ -30,9 +38,7 @@ git_dir="/opt/deploy/terraform-poc-django-app"
 repo = Repo(git_dir)
 assert not repo.bare
 diff = repo.git.diff()
-content_count=0
-for line in diff:
- content_count+=1
+content_count=git_pull(git_dir)
 if(content_count>0):
  print("changes: "+diff)
  harakiri()
