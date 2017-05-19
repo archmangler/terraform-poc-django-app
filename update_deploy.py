@@ -7,6 +7,7 @@
 #immutable, disposable servers and stateless dumb web frontends
 #termination is triggered by firewalling port 80 - the ELB
 #then declares instance as unhealthy , and the ASG policy replaces it.
+#the replacement inlcudes an update from the git repo using the ec2 instance user data script
 #traiano@gmail.com
 #commit 1
 #commit 2
