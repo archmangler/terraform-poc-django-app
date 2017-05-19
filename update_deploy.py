@@ -10,7 +10,6 @@
 #the replacement inlcudes an update from the git repo using the ec2 instance user data script
 #traiano@gmail.com
 #commit 1
-#commit 2
 
 import subprocess
 import git
