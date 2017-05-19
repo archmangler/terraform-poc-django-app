@@ -8,6 +8,7 @@
 #termination is triggered by firewalling port 80 - the ELB
 #then declares instance as unhealthy , and the ASG policy replaces it.
 #traiano@gmail.com
+#commit 1
 #
 
 import subprocess
