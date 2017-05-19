@@ -9,6 +9,7 @@
 #then declares instance as unhealthy , and the ASG policy replaces it.
 #the replacement inlcudes an update from the git repo using the ec2 instance user data script
 #traiano@gmail.com
+#test commit to trigger off a deploy / webserver update
 
 import subprocess
 import git
