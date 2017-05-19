@@ -9,7 +9,7 @@
 #then declares instance as unhealthy , and the ASG policy replaces it.
 #traiano@gmail.com
 #commit 1
-#
+#commit 2
 
 import subprocess
 import git
