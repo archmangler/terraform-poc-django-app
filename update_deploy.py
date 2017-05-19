@@ -5,7 +5,7 @@
 #to replace it.
 #NOTE: Seems a little drastic, but here we demonstrate the concept of
 #immutable, disposable servers and stateless dumb web frontends
-#The termination is triggered by firewalling port 80 - the ELB
+#termination is triggered by firewalling port 80 - the ELB
 #then declares instance as unhealthy , and the ASG policy replaces it.
 #traiano@gmail.com
 #
