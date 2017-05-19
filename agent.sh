@@ -2,7 +2,7 @@
 #crude little startup script for django web server
 #NOT FOR PRODUCTION GRADE SYSTEMS!!
 #get the latest files selectively from the repo:
-/bin/cd /opt/deploy/terraform-poc-django-app/
+cd /opt/deploy/terraform-poc-django-app/
 /bin/git pull
 /bin/cp midnight/midnight/settings.py /opt/midnight/midnight/settings.py 
 /bin/cp  midnight/polls/views.py  /opt/midnight/polls/views.py 
