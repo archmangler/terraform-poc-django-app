@@ -77,6 +77,11 @@
       "MaxValue": "5",
       "ConstraintDescription" : "must be between 1 and 5 EC2 instances."
     },
+    "TcpPort": {
+      "Description": "Enter RDS Listening TCP Port number.",
+      "Type": "Number",
+      "Default": "3306"
+    },
 
     "InstanceType" : {
       "Description" : "WebServer EC2 instance type",
@@ -271,8 +276,8 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : "10.100.3.0/24",
-        "AvailabilityZone" : { "Fn::Select": [ "1", {"Fn::GetAZs": {"Ref": "AWS::Region"}} ]},
+        "CidrBlock" : "10.100.2.0/24",
+        "AvailabilityZone" : { "Fn::Select": [ "2", {"Fn::GetAZs": {"Ref": "AWS::Region"}} ]},
         "Tags" : [
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
           {"Key" : "Network", "Value" : "Private" }
@@ -280,6 +285,18 @@
       }
     },
    "PrivateSubnetB" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : "10.100.3.0/24",
+        "AvailabilityZone" : { "Fn::Select": [ "0", {"Fn::GetAZs": {"Ref": "AWS::Region"}} ]},
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackName"} },
+          {"Key" : "Network", "Value" : "Private" }
+        ]
+      }
+    },
+   "PrivateSubnetC" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
@@ -396,7 +413,7 @@
     "WebServerGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
-        "VPCZoneIdentifier" : { "Ref" : PublicSubnetA },
+        "VPCZoneIdentifier" : [ { "Ref" : "PublicSubnetA" } ],
         "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
         "MinSize" : "1",
         "MaxSize" : "5",
@@ -414,7 +431,7 @@
           "MinInstancesInService": "1",
           "MaxBatchSize": "1",
           "PauseTime" : "PT15M",
-          "WaitOnResourceSignals": "true"
+          "WaitOnResourceSignals": "false"
         }
       }
     },
@@ -540,18 +557,11 @@
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "InstanceType" : { "Ref" : "InstanceType" },
         "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
-        "NetworkInterfaces" : [{
-                "AssociatePublicIpAddress" : "True",
-                 "DeleteOnTermination" : "True",
-                 "SubnetId" : { "Ref" : "PublicSubnet" },
-                 "DeviceIndex" : "0",
-                 "GroupSet" : [ { "Ref" : "SecurityGroup" } ]
-         }],
         "KeyName" : { "Ref" : "KeyName" },
+        "AssociatePublicIpAddress" : "True",
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
              "#!/bin/bash -xe\n",
              "yum update -y aws-cfn-bootstrap\n",
-
              "# Install the files and packages from the metadata\n",
              "/opt/aws/bin/cfn-init -v ",
              "         --stack ", { "Ref" : "AWS::StackName" },
@@ -566,7 +576,19 @@
         ]]}}
       }
     },
-
+    "RDSAccessSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP access via port 80 locked down to the ELB and SSH access",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "3306",
+          "ToPort" : "3306", 
+          "SourceSecurityGroupId" : {"Fn::Select" : [0, {"Fn::GetAtt" : ["ApplicationLoadBalancer", "SecurityGroups"]}]}
+        } ], 
+        "VpcId" : { "Ref" : "VPC" }
+      }
+    },
     "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
@@ -586,32 +608,36 @@
         "VpcId" : { "Ref" : "VPC" }
       }
     },
-
-    "DBSecurityGroup": {
-      "Type" : "AWS::RDS::DBSecurityGroup",
-      "Properties" : {
-        "EC2VpcId" : { "Ref" : "VPC" },
-        "DBSecurityGroupIngress" : {
-          "EC2SecurityGroupId": { "Ref": "WebServerSecurityGroup" }
-        },
-        "GroupDescription": "database access"
+   "MySQLDatabase": 
+   {
+     "Type": "AWS::RDS::DBInstance",
+     "DependsOn": ["DbSubnetGroup", "RDSAccessSecurityGroup"],
+     "Properties": {
+       "Engine" : "MySQL",
+       "DBName" : { "Ref": "DBName" },
+       "MultiAZ" : { "Ref": "MultiAZDatabase" },
+       "MasterUsername": { "Ref": "DBUser" },
+       "MasterUserPassword": { "Ref" : "DBPassword" },
+       "DBInstanceClass": { "Ref" : "DBInstanceClass" },
+       "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
+        "DBSubnetGroupName": {"Ref": "DbSubnetGroup"},
+       "VPCSecurityGroups" : [ { "Ref" : "RDSAccessSecurityGroup" } ]
       }
-    },
-
-    "MySQLDatabase": {
-      "Type": "AWS::RDS::DBInstance",
+   },
+   "DbSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
       "Properties": {
-        "Engine" : "MySQL",
-        "DBName" : { "Ref": "DBName" },
-        "MultiAZ" : { "Ref": "MultiAZDatabase" },
-        "MasterUsername": { "Ref": "DBUser" },
-        "MasterUserPassword": { "Ref" : "DBPassword" },
-        "DBInstanceClass": { "Ref" : "DBInstanceClass" },
-        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
-        "DBSecurityGroups": [ { "Ref" : "DBSecurityGroup" } ]
+        "DBSubnetGroupDescription": {"Fn::Join": ["", ["RDS Subnet Group for ", {"Ref": "AWS::StackName"}]]},
+        "SubnetIds": [ {"Ref": "PrivateSubnet"}, {"Ref": "PrivateSubnetB"}, {"Ref": "PrivateSubnetC"} ],
+        "Tags": [
+          { 
+            "Key": "Name",
+            "Value": {"Ref": "AWS::StackName"}
+          }
+        ]
       }
     }
-  },
+   },
 
   "Outputs" : {
     "WebsiteURL" : {
